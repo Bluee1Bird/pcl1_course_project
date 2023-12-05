@@ -4,7 +4,9 @@
 # This code is to be used as is.
 
 import os
+import re
 import sys
+import argparse
 
 # Markers for the start and end of Project Gutenberg headers/footers
 TEXT_START_MARKERS = frozenset((
@@ -63,7 +65,6 @@ TEXT_START_MARKERS = frozenset((
     '                this Project Gutenberg edition.',
 ))
 
-
 TEXT_END_MARKERS = frozenset((
     "*** END OF THE PROJECT GUTENBERG",
     "*** END OF THIS PROJECT GUTENBERG",
@@ -93,11 +94,10 @@ TEXT_END_MARKERS = frozenset((
     " *** END OF THIS PROJECT GUTENBERG",
 ))
 
-
 LEGALESE_START_MARKERS = frozenset(("<<THIS ELECTRONIC VERSION OF",))
 
-
 LEGALESE_END_MARKERS = frozenset(("SERVICE THAT CHARGES FOR DOWNLOAD",))
+
 
 def strip_headers(text):
     """Remove lines that are part of the Project Gutenberg header or footer."""
@@ -141,6 +141,7 @@ def strip_headers(text):
 
     return sep.join(out)
 
+
 ##############################################################################################################
 ##############################################################################################################
 
@@ -151,25 +152,68 @@ def split_book_by_chapter(cleaned_text, book_title):
     Implement a function that splits the book into chapters and saves 
     each chapter in a separate file in a folder named after the book title.
     """
-    # Add your code here to split the cleaned_text into chapters
-    # and save each chapter in a separate file
-    pass
+    # 3. Save the cleaned text in the book title folder
+
+    folder_path = book_title
+
+    # Check if the folder exists, if not, create it
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    # Specify the file path within the folder
+    file_path = os.path.join(folder_path, book_title + "_clean.txt")
+
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.write(cleaned_text)
+
+    # 4. Split the text into chapters and save them in the book title folder under a subfolder named 'chapters'
+
+    # TODO: this does not work at all
+    #chapters = re.split("(CHAPTER|Chapter\s.*$)|(I|II|III|IV|V|VI|VII|VIII|IX)", cleaned_text)
+    chapters = re.split("(CHAPTER|Chapter\s.*$)", cleaned_text)
+
+    chapter_path = os.path.join(folder_path, "chapters")
+
+    # Check if the folder exists, if not, create it
+    if not os.path.exists(chapter_path):
+        os.makedirs(chapter_path)
+
+    for number, chapter in enumerate(chapters):
+        file_path = os.path.join(chapter_path, str(number) + ".txt")
+
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(chapter)
+
 
 def main():
+
+    # Initialize parser
+    parser = argparse.ArgumentParser(description="add relative path of the book you want to parse")
+    parser.add_argument("file_path")
+
+    args = parser.parse_args()
     if len(sys.argv) != 2:
         print("Usage: python gutenberg_cleanup.py <path_to_book_file>")
-        sys.exit(1)
+        # sys.exit(1)
 
-    file_path = # Add your code here to get the file path from the command line arguments
+    file_path = args.file_path
     book_title = os.path.basename(file_path).replace('.txt', '')
+
+    print(book_title)
 
     # 1. Read the text file
 
+    with open(file_path, "r", encoding="UTF8") as book:
+        text = book.read()
+
     # 2. Clean the text
 
-    # 3. Save the cleaned text in the book title folder
+    cleaned_text = strip_headers(text)
 
-    # 4. Split the text into chapters and save them in the book title folder under a subfolder named 'chapters'
+    split_book_by_chapter(cleaned_text, book_title)
+
+
+
 
 if __name__ == '__main__':
     main()
