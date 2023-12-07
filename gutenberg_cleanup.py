@@ -168,9 +168,9 @@ def split_book_by_chapter(cleaned_text, book_title):
 
     # 4. Split the text into chapters and save them in the book title folder under a subfolder named 'chapters'
 
-    # TODO: this does not work at all
-    #chapters = re.split("(CHAPTER|Chapter\s.*$)|(I|II|III|IV|V|VI|VII|VIII|IX)", cleaned_text)
-    chapters = re.split("(CHAPTER|Chapter\s.*$)", cleaned_text)
+
+    chapters = re.split("\n\s*CHAPTER\s", cleaned_text)
+    print(chapters)
 
     chapter_path = os.path.join(folder_path, "chapters")
 
