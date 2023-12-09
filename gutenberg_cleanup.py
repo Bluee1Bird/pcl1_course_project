@@ -99,7 +99,7 @@ LEGALESE_START_MARKERS = frozenset(("<<THIS ELECTRONIC VERSION OF",))
 LEGALESE_END_MARKERS = frozenset(("SERVICE THAT CHARGES FOR DOWNLOAD",))
 
 
-def strip_headers(text):
+def strip_headers(text: str) -> str:
     """Remove lines that are part of the Project Gutenberg header or footer."""
     lines = text.splitlines()
     sep = str(os.linesep)
@@ -147,11 +147,23 @@ def strip_headers(text):
 
 #### MODIFY HERE ####
 
-def split_book_by_chapter(cleaned_text, book_title):
+def split_book_by_chapter(cleaned_text: str, book_title:str):
     """
-    Implement a function that splits the book into chapters and saves 
-    each chapter in a separate file in a folder named after the book title.
+    Split the provided cleaned text into chapters and save each chapter in a separate file.
+
+    Parameters:
+    - cleaned_text (str): The cleaned text of the book to be split into chapters.
+    - book_title (str): The title of the book, used to create a folder for saving the chapters.
+
+    Returns:
+    None
+
+    The function creates a folder named after the book title and saves the entire cleaned text
+    in a file named 'book_title_clean.txt' within that folder. Additionally, it splits the text
+    into chapters using the string "CHAPTER" as a delimiter and saves each chapter in a separate
+    file under a subfolder named 'chapters'. The files are named numerically (e.g., '0.txt', '1.txt', etc.).
     """
+
     # 3. Save the cleaned text in the book title folder
 
     folder_path = book_title
@@ -167,7 +179,6 @@ def split_book_by_chapter(cleaned_text, book_title):
         file.write(cleaned_text)
 
     # 4. Split the text into chapters and save them in the book title folder under a subfolder named 'chapters'
-
 
     chapters = re.split("\n\s*CHAPTER\s", cleaned_text)
     print(chapters)
@@ -186,7 +197,20 @@ def split_book_by_chapter(cleaned_text, book_title):
 
 
 def main():
+    """
+    Parse the command line arguments, read a text file, clean the text, and split it into chapters.
 
+    Usage:
+    python script_name.py <path_to_book_file>
+
+    Parameters:
+    None
+
+    The function uses argparse to handle command line arguments, expecting the relative path
+    of the book file to be provided. It then reads the text from the file, cleans it using the
+    strip_headers function, and splits it into chapters using the split_book_by_chapter function.
+    The book title is extracted from the file path and used for creating a folder to save the chapters.
+    """
     # Initialize parser
     parser = argparse.ArgumentParser(description="add relative path of the book you want to parse")
     parser.add_argument("file_path")
@@ -211,8 +235,6 @@ def main():
     cleaned_text = strip_headers(text)
 
     split_book_by_chapter(cleaned_text, book_title)
-
-
 
 
 if __name__ == '__main__':
