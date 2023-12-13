@@ -1,0 +1,10 @@
+Our Python Script organizes and processes sentiment and entity data for the following books: Little Women, The Great Gatsby and Pride and Prejudice. 
+
+The Script is built as explained:
+
+First we wrote two functions, one for the sentiments, the other for the entities. Both functions read a text file, process the data and convert the file into a JSON file. More specifically the functions read the content of the text line by line and split each line using ':'. The functions create a dictionary with the sentiments or entities as keys and their counts as values. This dictionary is then converted into a JSON object. By calling the function write_as_json the JSON object is written into a JSON file and the extension '.json' gets appended to the output JSON file.  
+
+Next we wrote one function for the sentiments and another for the entities to split the data into separate files for each chapter of the book. In both cases the function first reads trough the files containing only the sentiment or entity data. It then creates individual text files for each chapter.After this we iterated through the files to convert the files into the JSON format once again. At last, the main function calls all the functions above. 
+
+
+
