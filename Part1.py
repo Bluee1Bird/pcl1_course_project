@@ -103,7 +103,7 @@ def main():
 
     path = ".\\pride_and_prejudice\\chapters\\"
 
-    character_dicts = [elizabeth_lizzy, jane_bennet, mr_collins, mr_collins, mr_darcy, mr_bingley, lydia,
+    character_dicts = [elizabeth_lizzy, jane_bennet, mr_collins, mr_darcy, mr_bingley, lydia,
                        lady_catherine_de_bourgh]
 
     for filename in os.listdir(path):
