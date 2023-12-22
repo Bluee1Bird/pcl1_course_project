@@ -65,71 +65,80 @@ def main():
         "name": "Elizabeth Bennet",
         "aliases": ["Elizabeth Bennet", "Elizabeth", "Lizzy", "Miss ELiza"],
         "occurrences": []  # More occurrences for CharacterName
-        }
+    }
     jane_bennet = {
         "superstring": "jane_bennet",
         "name": "Jane Bennet",
         "aliases": ["Jane Bennet", "Jane"],
         "occurrences": []  # More occurrences for CharacterName
-        }
+    }
 
     mr_collins = {
         "superstring": "mr_collins",
         "name": "Mr Collins",
         "aliases": ["Mr Collins", "Collins"],
         "occurrences": []  # More occurrences for CharacterName
-        }
+    }
 
     mr_darcy = {
         "superstring": "mr_darcy",
         "name": "Mr Fitzwilliam Darcy",
         "aliases": ["Mr Darcy", "Darcy"],
         "occurrences": []  # More occurrences for CharacterName
-        }
+    }
 
     mr_bingley = {
         "superstring": "mr_bingley",
         "name": "Mr Bingley",
         "aliases": ["Mr Bingley", "Bingley"],
         "occurrences": []  # More occurrences for CharacterName
-        }
+    }
 
     lydia = {
         "superstring": "lydia",
         "name": "Lydia Bennet",
         "aliases": ["Lydia", "Lydia Bennet"],
         "occurrences": []  # More occurrences for CharacterName
-        }
+    }
 
     lady_catherine_de_bourgh = {
         "superstring": "lady_catherine_de_bourgh",
         "name": "Lady Catherine de Bourgh",
         "aliases": ["Lady Catherine de Bourgh", "Mrs de Bourgh", "Lady Catherine", "Catherine de Bourgh"],
         "occurrences": []  # More occurrences for CharacterName
-        }
+    }
 
-    with open(".\\pride_and_prejudice\\pride_and_prejudice_clean.txt", "r", encoding="UTF8") as file:
-        doc = nlp(file.read())
-        tokens = list(doc.ents)
+    path = ".\\pride_and_prejudice\\chapters\\"
 
-        character_dicts = [elizabeth_lizzy, jane_bennet, mr_collins, mr_collins, mr_darcy, mr_bingley, lydia,
-                           lady_catherine_de_bourgh]
-        for token in tokens:
-            if token.label_ == "PERSON":
-                for name in character_dicts:
-                    # print(token.text , name)
-                    if token.text.lower() in name["superstring"]:
-                        if name == jane_bennet and token.text == "Bennet":  # to catch when 'Bennet' does not refer to Jane
-                            pass
-                        else:
-                            context_dict = {
-                                "sentence": token.sent.text,
-                                "chapter": "Chapter number",  # TODO
-                                "position": {"start": token.start, "end": token.end}
-                            }
+    character_dicts = [elizabeth_lizzy, jane_bennet, mr_collins, mr_collins, mr_darcy, mr_bingley, lydia,
+                       lady_catherine_de_bourgh]
 
-                            name["occurrences"].append( context_dict )
+    for filename in os.listdir(path):
 
+        with open(f".\\pride_and_prejudice\\chapters\\{filename}", "r", encoding="UTF8") as file:
+            doc = nlp(file.read())
+            tokens = list(doc.ents)
+
+
+            for token in tokens:
+                if token.label_ == "PERSON":
+                    for name in character_dicts:
+                        # print(token.text , name)
+                        if token.text.lower() in name["superstring"]:
+                            if name == jane_bennet and token.text == "Bennet":  # to catch when 'Bennet' does not refer to Jane
+                                pass
+                            else:
+                                context_dict = {
+                                    "sentence": token.sent.text,
+                                    "chapter": filename.strip(".txt"),
+                                    "position": {"start": token.start, "end": token.end}
+                                }
+
+                                name["occurrences"].append(context_dict)
+
+    with open(".\\pride_and_prejudice\\pride_and_prejudice_MainCharacters_NER", "a", encoding="UTF8") as jsonfile:
+        for character_dict in character_dicts:
+            jsonfile.write(json.dumps(character_dict, indent=3))
 
 
 
