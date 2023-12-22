@@ -9,6 +9,7 @@ import re
 import json
 import spacy
 
+
 # import nltk
 # --- You may add other imports here ---
 
@@ -16,43 +17,35 @@ import spacy
 # TODO: Load the spaCy model
 # TODO: Load the book text
 
-# Clustering Dictionaries
-pride_and_prejudice_characters = {
-    # "mary_bennet": ["Marry Bennet", "Mary"],
-    "elizabeth_lizzy": ["Elizabeth Bennet", "Elizabeth", "Lizzy", "Miss Eliza"],
-    "jane_bennet": ["Jane Bennet", "Jane"],
-    "mr_collins": ["Mr Collins", "Collins"],
-    "mr_darcy": ["Mr Darcy", "Darcy"],
-    "mr_bingley": ["Mr Bingley", "Bingley"],
-    "mr_wickham": ["Mr Wickham", "Wickham"],
-    "lydia": ["Lydia", "Lydia Bennet"],
-    # "catherine_bennet": ["Kitty", "Kitty Bennet", "Catherine Bennet"],
-    "lady_catherine_de_bourgh": ["Lady Catherine de Bourgh", "Mrs de Bourgh", "Lady Catherine", "Catherine de Bourgh"]
-}
-
-
-# Feel free to add more functions as needed!
-
 
 # Function to process the text and perform NER
-def perform_ner(text, spacy_model):
-    # TODO: Process the text using the provided model and return the entities
-    # Example: return nlp_model(text).ents
-    pass
+def perform_ner(text, nlp):
+    doc=  nlp(text)
+    return list(doc.ents)
 
 
 # Function to extract and structure entity information
-def extract_entity_info(entities):
-    entity_data = []
-    # TODO: Iterate over entities and extract necessary information
-    # Append the extracted info to entity_data
-    return entity_data
+def extract_entity_info(tokens, filename, character_dicts):
+    for token in tokens:
+        if token.label_ == "PERSON":
+            for name in character_dicts:
+                if token.text.lower() in name["superstring"]:
+                    if name["superstring"] == "jane_bennet" and token.text == "Bennet":  # to catch when 'Bennet' does not refer to Jane
+                        pass
+                    else:
+                        context_dict = {
+                            "sentence": token.sent.text,
+                            "chapter": filename.strip(".txt"),
+                            "position": {"start": token.start, "end": token.end}
+                        }
+
+                        name["occurrences"].append(context_dict)
 
 
 # Function to save data to JSON file
-def save_to_json(data, filename):
-    # TODO: Save the data to a JSON file
-    pass
+def save_to_json(character_dicts):
+    with open(".\\pride_and_prejudice\\pride_and_prejudice_MainCharacters_NER.json", "w", encoding="UTF8") as jsonfile:
+        json.dump(character_dicts, jsonfile, indent=3)
 
 
 # Main Function
@@ -118,36 +111,12 @@ def main():
         print(filename)
 
         with open(f".\\pride_and_prejudice\\chapters\\{filename}", "r", encoding="UTF8") as file:
-            doc = nlp(file.read())
-            tokens = list(doc.ents)
+            tokens = perform_ner(file.read(), nlp)
 
-            for token in tokens:
-                if token.label_ == "PERSON":
-                    for name in character_dicts:
-                        # print(token.text , name)
-                        if token.text.lower() in name["superstring"]:
-                            if name == jane_bennet and token.text == "Bennet":  # to catch when 'Bennet' does not refer to Jane
-                                pass
-                            else:
-                                context_dict = {
-                                    "sentence": token.sent.text,
-                                    "chapter": filename.strip(".txt"),
-                                    "position": {"start": token.start, "end": token.end}
-                                }
+            extract_entity_info(tokens, filename, character_dicts)
 
-                                name["occurrences"].append(context_dict)
+    save_to_json(character_dicts)
 
-    with open(".\\pride_and_prejudice\\pride_and_prejudice_MainCharacters_NER.json", "w", encoding="UTF8") as jsonfile:
-        json.dump(character_dicts, jsonfile, indent=3)
-
-    # Perform NER on the text
-    # entities = perform_ner(book_text)
-
-    # Extract information from entities
-    # entity_info = extract_entity_info(entities)
-
-    # Save the results to a JSON file
-    # save_to_json(entity_info, 'BookTitle_NER.json')
 
 
 # Run the main function

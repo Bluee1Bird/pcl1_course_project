@@ -7,8 +7,9 @@ Students: <person 1>, <person 2>
 import os
 import re
 import json
-import spacy
-import nltk
+
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+
 # --- You may add other imports here ---
 
 
@@ -26,9 +27,31 @@ def save_sentiment_results(results, filename):
     # TODO: Save the sentiment analysis results in a structured JSON format
     pass
 
+def save_to_json(character_dicts):
+    with open(".\\pride_and_prejudice\\pride_and_prejudice_sentiment.json", "w", encoding="UTF8") as jsonfile:
+        json.dump(character_dicts, jsonfile, indent=3)
+
 
 # Main function
 def main():
+    analyzer = SentimentIntensityAnalyzer()
+
+
+    # Load the JSON file
+    file_path = '.\\pride_and_prejudice\\pride_and_prejudice_MainCharacters_NER.json'
+
+    with open(file_path, 'r') as file:
+        character_dicts = json.load(file)
+
+    # Iterate over each entry and access the 'sentence' property
+    for entry in character_dicts:
+        for occurrence in entry['occurrences']:
+            sentence = occurrence["sentence"]
+            # add the sentiment score to the dictionary
+            occurrence["sentiment"] = analyzer.polarity_scores(sentence)
+
+
+    save_to_json(character_dicts)
 
     # TODO: Load or define the text for analysis
     text = "Your text for sentiment analysis."

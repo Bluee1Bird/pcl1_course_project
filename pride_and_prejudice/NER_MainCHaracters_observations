@@ -10,7 +10,7 @@ The structure is;
         "occurrences": []  # More occurrences for CharacterName
     }
 
-In the SpaCy file the superstring is attached to the NER Person. We included the superstring as a key in the dictionary of every person so that every variant of the name is considered.
+In the SpaCy file the superstring is attached to the NE Person. We included the superstring as a key in the dictionary of every person so that every variant of the name is considered.
 We clustered the different names of a name of a person in such a way that we initialized a dictionary for every person. This dictionary is labeled with the superstring and includes all forms of the name which appear in the book.
 
 Our observations are the following:
@@ -22,3 +22,9 @@ She longed to\n\nspeak, but could think of nothing to say; and after a short sil
 
 the sentence was recorded to belong to each of the mentioned characters.
 
+The clustering using substrings worked as expected.
+
+We have different names in the spacy NER that can be omitted, like places, chapters and unimportant characters. We examined the NER by hand and summarized all aliases of characters to get a first overview. This is where we discovered, for example, that Elizabeth Bennet can be referred to as Eliza, Miss Eliza, Lizzy and Elizabeth. We determined the characters we want to focus on were; Elizabeth, Jane and Lydia Bennet, Mr Collins, Mr Darcy, Mr Bingley,  and Lady Catherine de Bourgh.
+Unfortunately, 7 characters in this book can be referred to by the same name; Bennet. We determined that since Mr and Mrs Bennet were not important for our analysis and Elizabeth and Lydia are not referred to as Bennet without some version of their first names, we were only going to include Bennet when it referred to Jane. To accomplish this, we only included occurrences of 'Miss Bennet' specifically (only the eldest daughter may be referred to without surname).
+
+Another challenge we encountered, was the formatting of information. We struggled to identify the correct data structures for the json conversion. GPT4 helped with this.
