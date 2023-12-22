@@ -114,11 +114,12 @@ def main():
                        lady_catherine_de_bourgh]
 
     for filename in os.listdir(path):
+        if str(filename) == "0.txt": continue
+        print(filename)
 
         with open(f".\\pride_and_prejudice\\chapters\\{filename}", "r", encoding="UTF8") as file:
             doc = nlp(file.read())
             tokens = list(doc.ents)
-
 
             for token in tokens:
                 if token.label_ == "PERSON":
@@ -136,11 +137,8 @@ def main():
 
                                 name["occurrences"].append(context_dict)
 
-    with open(".\\pride_and_prejudice\\pride_and_prejudice_MainCharacters_NER", "a", encoding="UTF8") as jsonfile:
-        for character_dict in character_dicts:
-            jsonfile.write(json.dumps(character_dict, indent=3))
-
-
+    with open(".\\pride_and_prejudice\\pride_and_prejudice_MainCharacters_NER.json", "w", encoding="UTF8") as jsonfile:
+        json.dump(character_dicts, jsonfile, indent=3)
 
     # Perform NER on the text
     # entities = perform_ner(book_text)

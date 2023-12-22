@@ -1,0 +1,24 @@
+
+We have a json file containing information about every character we deem to be important.
+
+The structure is;
+
+    name = {
+        "superstring": "",
+        "name": "" ,
+        "aliases": ["", ""],
+        "occurrences": []  # More occurrences for CharacterName
+    }
+
+In the SpaCy file the superstring is attached to the NER Person. We included the superstring as a key in the dictionary of every person so that every variant of the name is considered.
+We clustered the different names of a name of a person in such a way that we initialized a dictionary for every person. This dictionary is labeled with the superstring and includes all forms of the name which appear in the book.
+
+Our observations are the following:
+
+Our main characters among others include Lizzy, Jane and Mr. Bingley. We did not consider Mrs. Bennet but Miss Bennett part of the main characters because Mrs. Bennett refers to every sister and Miss Bennett only refers to Jane.
+Therefore when looking at the json file we saw that for the occurrence of the three characters Lizzy, Bingley and Jane in the sentence:
+
+She longed to\n\nspeak, but could think of nothing to say; and after a short silence Mrs.\n\nBennet began repeating her thanks to Mr. Bingley for his kindness to\n\nJane, with an apology for troubling him also with Lizzy.
+
+the sentence was recorded to belong to each of the mentioned characters.
+
